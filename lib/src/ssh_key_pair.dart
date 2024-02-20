@@ -650,8 +650,11 @@ class RsaPrivateKey implements SSHKeyPair {
 
   factory RsaPrivateKey.decode(Uint8List keyBlob) {
     final parser = ASN1Parser(keyBlob);
+    final mainSequence = parser.nextObject() as ASN1Sequence;
+    final octetString = mainSequence.elements[2] as ASN1OctetString;
+    final octetStringParser = ASN1Parser(octetString.octets);
 
-    final sequence = parser.nextObject() as ASN1Sequence;
+    final sequence = octetStringParser.nextObject() as ASN1Sequence;
     final version = (sequence.elements[0] as ASN1Integer).valueAsBigInteger;
     final n = (sequence.elements[1] as ASN1Integer).valueAsBigInteger;
     final e = (sequence.elements[2] as ASN1Integer).valueAsBigInteger;
